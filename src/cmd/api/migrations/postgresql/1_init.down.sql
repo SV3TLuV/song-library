@@ -1,0 +1,4 @@
+DROP EXTENSION IF EXISTS "uuid-ossp";
+
+DROP TABLE IF EXISTS "song";
+DROP TABLE IF EXISTS "group";

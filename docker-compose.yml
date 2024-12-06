@@ -1,0 +1,40 @@
+volumes:
+  music_library_pg_db:
+
+networks:
+  host:
+    driver: bridge
+
+services:
+  database:
+    container_name: music_library_database
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=P@ssw0rd
+      - POSTGRES_DB=music_library
+    volumes:
+      - music_library_pg_db:/var/lib/postgresql/data
+    networks:
+      - host
+    logging:
+      driver: none
+    restart: always
+
+  api:
+    container_name: music_library_api
+    image: music_library_api
+    build:
+      context: .
+      dockerfile: Measurements.Api/Dockerfile
+    ports:
+      - "8080:8080"
+    user: root
+    depends_on:
+      - database
+    networks:
+      - host
+    logging:
+      driver: none
+    restart: always
