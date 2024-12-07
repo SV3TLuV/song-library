@@ -94,7 +94,7 @@ func (repo *songRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.S
 			goqu.I("song.*"),
 			goqu.I("group.name").As("group"),
 		).
-		Where(goqu.Ex{"id": id})
+		Where(goqu.Ex{"song.id": id})
 
 	sql, args, err := query.ToSQL()
 	if err != nil {

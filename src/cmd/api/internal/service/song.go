@@ -36,7 +36,8 @@ func NewSongService(
 }
 
 func (s *songService) GetSongs(ctx context.Context, filters *model.SongFilter, page, pageSize uint) (*model.PaginatedList[model.Song], error) {
-	songs, err := s.songRepo.GetSongs(ctx, filters, page, pageSize)
+	offset := (page - 1) * pageSize
+	songs, err := s.songRepo.GetSongs(ctx, filters, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -62,12 +63,16 @@ func (s *songService) GetSongText(ctx context.Context, id uuid.UUID, page, pageS
 		return nil, errors.Wrap(err, "get song failed")
 	}
 
-	verses := strings.Split(song.Song, "\n\n")
+	verses := strings.Split(song.Text, "\n\n")
 	total := uint(len(verses))
 	totalPages := uint(math.Ceil(float64(total) / float64(pageSize)))
 
+	if page > totalPages {
+		return nil, errors.Wrap(model.ErrBadRequest, "page out of range")
+	}
+
 	start := (page - 1) * pageSize
-	if start > total {
+	if start >= total {
 		return nil, errors.Wrap(model.ErrBadRequest, "page out of range")
 	}
 

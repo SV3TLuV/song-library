@@ -19,6 +19,6 @@ func (r *GetListRequest) SetDefaults() {
 		r.PageSize = 5
 	}
 	if r.Page == 0 {
-		r.Page = 0
+		r.Page = 1
 	}
 }

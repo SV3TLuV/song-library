@@ -30,7 +30,7 @@ func NewSongController(songService service.SongService) *SongController {
 // @Param        link      query     string  false  "Filter by link"
 // @Param        releaseDate query   string  false  "Filter by release date (YYYY-MM-DD)"
 // @Param        page      query     int     false  "Page number (default: 1)"
-// @Param        pageSize  query     int     false  "Page size (default: 10)"
+// @Param        pageSize  query     int     false  "Page size (default: 5)"
 // @Success      200       {object}  model.PaginatedList[model.SongView]
 // @Failure      400       {object}  model.APIError  "Bad request"
 // @Failure      500       {object}  model.APIError  "Internal server error"
@@ -85,7 +85,7 @@ func (c *SongController) GetList(ctx echo.Context) error {
 // @Produce      json
 // @Param        id        path      string  true   "Song ID"
 // @Param        page      query     int     false  "Page number (default: 1)"
-// @Param        pageSize  query     int     false  "Page size (default: 10)"
+// @Param        pageSize  query     int     false  "Page size (default: 1)"
 // @Success      200       {object}  []string
 // @Failure      400       {object}  model.APIError  "Bad request"
 // @Failure      404       {object}  model.APIError  "Song not found"

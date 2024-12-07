@@ -13,6 +13,6 @@ func (r *GetTextRequest) SetDefaults() {
 		r.PageSize = 1
 	}
 	if r.Page == 0 {
-		r.Page = 0
+		r.Page = 1
 	}
 }
