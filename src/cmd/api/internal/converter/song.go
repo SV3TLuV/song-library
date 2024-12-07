@@ -44,9 +44,9 @@ func ToViewFromSong(song model.Song) model.SongView {
 		Song:        song.Song,
 		Text:        song.Text,
 		Link:        song.Link,
-		ReleaseDate: song.ReleaseDate,
-		CreatedAt:   song.CreatedAt,
-		UpdatedAt:   song.UpdatedAt,
+		ReleaseDate: song.ReleaseDate.Format("02.01.2006"),
+		CreatedAt:   song.CreatedAt.Format("02.01.2006"),
+		UpdatedAt:   song.UpdatedAt.Format("02.01.2006"),
 	}
 }
 

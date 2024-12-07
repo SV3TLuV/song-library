@@ -94,7 +94,7 @@ paths:
         in: query
         name: link
         type: string
-      - description: Filter by release date (YYYY-MM-DD)
+      - description: Filter by release date (DD.MM.YYYY)
         in: query
         name: releaseDate
         type: string

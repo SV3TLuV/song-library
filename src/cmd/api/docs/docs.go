@@ -49,7 +49,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Filter by release date (YYYY-MM-DD)",
+                        "description": "Filter by release date (DD.MM.YYYY)",
                         "name": "releaseDate",
                         "in": "query"
                     },

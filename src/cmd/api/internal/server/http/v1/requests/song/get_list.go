@@ -1,17 +1,13 @@
 package song
 
-import (
-	"time"
-)
-
 type GetListRequest struct {
-	Group       *string    `query:"group"`
-	Song        *string    `query:"song"`
-	Text        *string    `query:"text"`
-	Link        *string    `query:"link"`
-	ReleaseDate *time.Time `query:"releaseDate"`
-	Page        uint       `query:"page" validate:"gte=0"`
-	PageSize    uint       `query:"pageSize" validate:"gte=0"`
+	Group       *string `query:"group"`
+	Song        *string `query:"song"`
+	Text        *string `query:"text"`
+	Link        *string `query:"link"`
+	ReleaseDate *string `query:"releaseDate"`
+	Page        uint    `query:"page" validate:"gte=0"`
+	PageSize    uint    `query:"pageSize" validate:"gte=0"`
 }
 
 func (r *GetListRequest) SetDefaults() {

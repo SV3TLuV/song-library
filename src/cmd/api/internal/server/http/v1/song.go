@@ -3,11 +3,13 @@ package v1
 import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 	http2 "net/http"
 	"song-library-api/src/cmd/api/internal/converter"
 	"song-library-api/src/cmd/api/internal/model"
 	"song-library-api/src/cmd/api/internal/server/http/v1/requests/song"
 	"song-library-api/src/cmd/api/internal/service"
+	"time"
 )
 
 type SongController struct {
@@ -28,7 +30,7 @@ func NewSongController(songService service.SongService) *SongController {
 // @Param        song      query     string  false  "Filter by song name"
 // @Param        text      query     string  false  "Filter by text"
 // @Param        link      query     string  false  "Filter by link"
-// @Param        releaseDate query   string  false  "Filter by release date (YYYY-MM-DD)"
+// @Param        releaseDate query   string  false  "Filter by release date (DD.MM.YYYY)"
 // @Param        page      query     int     false  "Page number (default: 1)"
 // @Param        pageSize  query     int     false  "Page size (default: 5)"
 // @Success      200       {object}  model.PaginatedList[model.SongView]
@@ -49,11 +51,10 @@ func (c *SongController) GetList(ctx echo.Context) error {
 
 	context := ctx.Request().Context()
 	filters := &model.SongFilter{
-		GroupID:     uuid.Nil,
-		Song:        request.Song,
-		Text:        request.Text,
-		Link:        request.Link,
-		ReleaseDate: request.ReleaseDate,
+		GroupID: uuid.Nil,
+		Song:    request.Song,
+		Text:    request.Text,
+		Link:    request.Link,
 	}
 
 	if request.Group != nil {
@@ -62,6 +63,14 @@ func (c *SongController) GetList(ctx echo.Context) error {
 			return err
 		}
 		filters.GroupID = group.ID
+	}
+
+	if request.ReleaseDate != nil {
+		releaseDate, err := time.Parse("02.01.2006", *request.ReleaseDate)
+		if err != nil {
+			return errors.Wrap(err, "failed to parse release date")
+		}
+		filters.ReleaseDate = &releaseDate
 	}
 
 	songs, err := c.songService.GetSongs(context, filters, request.Page, request.PageSize)
@@ -191,7 +200,11 @@ func (c *SongController) Update(ctx echo.Context) error {
 		song.Link = *request.Link
 	}
 	if request.ReleaseDate != nil {
-		song.ReleaseDate = *request.ReleaseDate
+		releaseDate, err := time.Parse("02.01.2006", *request.ReleaseDate)
+		if err != nil {
+			return errors.Wrap(err, "failed to parse release date")
+		}
+		song.ReleaseDate = releaseDate
 	}
 
 	context := ctx.Request().Context()

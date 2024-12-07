@@ -23,9 +23,9 @@ type SongView struct {
 	Song        string
 	Text        string
 	Link        string
-	ReleaseDate time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ReleaseDate string
+	CreatedAt   string
+	UpdatedAt   string
 }
 
 type SongFilter struct {
