@@ -76,13 +76,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     }
                 }
@@ -122,13 +122,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     }
                 }
@@ -166,19 +166,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "404": {
                         "description": "Song not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     }
                 }
@@ -225,19 +225,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "404": {
                         "description": "Song not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     }
                 }
@@ -290,19 +290,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "404": {
                         "description": "Song not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.APIError"
                         }
                     }
                 }
@@ -310,6 +310,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "model.APIError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "model.PaginatedList-model_SongView": {
             "type": "object",
             "properties": {

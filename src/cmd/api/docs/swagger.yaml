@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  model.APIError:
+    properties:
+      message:
+        type: string
+    type: object
   model.PaginatedList-model_SongView:
     properties:
       items:
@@ -111,11 +116,11 @@ paths:
         "400":
           description: Bad request
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "500":
           description: Internal server error
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
       summary: Get list of songs
       tags:
       - Songs
@@ -140,15 +145,15 @@ paths:
         "400":
           description: Bad request
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "404":
           description: Song not found
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "500":
           description: Internal server error
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
       summary: Delete a song
       tags:
       - Songs
@@ -179,15 +184,15 @@ paths:
         "400":
           description: Bad request
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "404":
           description: Song not found
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "500":
           description: Internal server error
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
       summary: Update a song
       tags:
       - Songs
@@ -222,15 +227,15 @@ paths:
         "400":
           description: Bad request
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "404":
           description: Song not found
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "500":
           description: Internal server error
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
       summary: Get song text
       tags:
       - Songs
@@ -256,11 +261,11 @@ paths:
         "400":
           description: Bad request
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
         "500":
           description: Internal server error
           schema:
-            type: string
+            $ref: '#/definitions/model.APIError'
       summary: Create a new song
       tags:
       - Songs
