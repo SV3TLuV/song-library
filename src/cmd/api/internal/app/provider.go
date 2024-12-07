@@ -7,6 +7,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
 	"log"
+	"log/slog"
+	"os"
 	"song-library-api/src/cmd/api/internal/config"
 	"song-library-api/src/cmd/api/internal/db/postgres"
 	"song-library-api/src/cmd/api/internal/repository"
@@ -16,6 +18,8 @@ import (
 
 type serviceProvider struct {
 	config *config.Config
+
+	logger *slog.Logger
 
 	postgres  *pgxpool.Pool
 	trManager *manager.Manager
@@ -42,6 +46,15 @@ func (p *serviceProvider) Config() *config.Config {
 		p.config = cfg
 	}
 	return p.config
+}
+
+func (p *serviceProvider) Logger() *slog.Logger {
+	if p.logger == nil {
+		p.logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		}))
+	}
+	return p.logger
 }
 
 func (p *serviceProvider) Postgres() *pgxpool.Pool {
@@ -93,7 +106,8 @@ func (p *serviceProvider) SongService() service.SongService {
 			p.SongRepo(),
 			p.GroupRepo(),
 			p.MusicInfoClient(),
-			p.TransactionManager())
+			p.TransactionManager(),
+			p.Logger())
 	}
 	return p.songService
 }
@@ -102,7 +116,8 @@ func (p *serviceProvider) GroupService() service.GroupService {
 	if p.groupService == nil {
 		p.groupService = service.NewGroupService(
 			p.GroupRepo(),
-			p.TransactionManager())
+			p.TransactionManager(),
+			p.Logger())
 	}
 	return p.groupService
 }

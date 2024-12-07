@@ -5,6 +5,7 @@ import (
 	"github.com/avito-tech/go-transaction-manager/trm/v2/manager"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	"log/slog"
 	"math"
 	"song-library-api/src/cmd/api/internal/model"
 	"song-library-api/src/cmd/api/internal/repository"
@@ -20,18 +21,21 @@ type songService struct {
 	groupRepo       repository.GroupRepository
 	musicInfoClient *music_info_client.MusicInfoClient
 	trManager       *manager.Manager
+	logger          *slog.Logger
 }
 
 func NewSongService(
 	songRepo repository.SongRepository,
 	groupRepo repository.GroupRepository,
 	musicInfoClient *music_info_client.MusicInfoClient,
-	trManager *manager.Manager) *songService {
+	trManager *manager.Manager,
+	logger *slog.Logger) *songService {
 	return &songService{
 		songRepo:        songRepo,
 		groupRepo:       groupRepo,
 		musicInfoClient: musicInfoClient,
 		trManager:       trManager,
+		logger:          logger,
 	}
 }
 
@@ -48,6 +52,8 @@ func (s *songService) GetSongs(ctx context.Context, filters *model.SongFilter, p
 	}
 
 	totalPages := uint(math.Ceil(float64(total) / float64(pageSize)))
+
+	s.logger.Info("get songs", "filters", filters)
 
 	return &model.PaginatedList[model.Song]{
 		Page:       page,
@@ -81,6 +87,8 @@ func (s *songService) GetSongText(ctx context.Context, id uuid.UUID, page, pageS
 		end = total
 	}
 
+	s.logger.Info("get song text", "id", id, "song", song, "group", song.Group)
+
 	return &model.PaginatedList[string]{
 		Page:       page,
 		PageSize:   pageSize,
@@ -90,7 +98,14 @@ func (s *songService) GetSongText(ctx context.Context, id uuid.UUID, page, pageS
 }
 
 func (s *songService) GetByID(ctx context.Context, id uuid.UUID) (*model.Song, error) {
-	return s.songRepo.GetByID(ctx, id)
+	song, err := s.songRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	s.logger.Info("get song", "id", id, "song", song, "group", song.Group)
+
+	return song, nil
 }
 
 func (s *songService) Add(ctx context.Context, song, group string) (*model.Song, error) {
@@ -111,6 +126,8 @@ func (s *songService) Add(ctx context.Context, song, group string) (*model.Song,
 			if err != nil {
 				return err
 			}
+
+			s.logger.Info("group created", "id", groupDB.ID, "group", groupDB.Name)
 		}
 
 		releaseDate, err := time.Parse("02.01.2006", songDetail.ReleaseDate)
@@ -133,6 +150,11 @@ func (s *songService) Add(ctx context.Context, song, group string) (*model.Song,
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to add song")
 	}
+
+	s.logger.Info("song created",
+		"id", created.ID,
+		"group", created.Group,
+		"song", created.Song)
 
 	return created, nil
 }
@@ -160,6 +182,8 @@ func (s *songService) Edit(ctx context.Context, song model.Song) (*model.Song, e
 			if err != nil {
 				return err
 			}
+
+			s.logger.Info("group created", "id", groupDB.ID, "group", groupDB.Name)
 		}
 
 		releaseDate, err := time.Parse("02.01.2006", songDetail.ReleaseDate)
@@ -198,6 +222,11 @@ func (s *songService) Edit(ctx context.Context, song model.Song) (*model.Song, e
 		return nil, errors.Wrap(err, "failed to edit song")
 	}
 
+	s.logger.Info("song updated",
+		"id", updated.ID,
+		"group", updated.Group,
+		"song", updated.Song)
+
 	return updated, nil
 }
 
@@ -207,5 +236,12 @@ func (s *songService) Delete(ctx context.Context, id uuid.UUID) (*model.Song, er
 		return nil, errors.Wrap(err, "failed to get song")
 	}
 
-	return song, s.songRepo.Delete(ctx, *song)
+	err = s.songRepo.Delete(ctx, *song)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to delete song")
+	}
+
+	s.logger.Info("song deleted", "id", song.ID, "group", song.Group, "song", song.Song)
+
+	return song, nil
 }

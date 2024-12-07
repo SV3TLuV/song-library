@@ -9,7 +9,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 	echoSwagger "github.com/swaggo/echo-swagger"
-	"log"
 	"song-library-api/src/cmd/api/internal/config"
 	middleware2 "song-library-api/src/cmd/api/internal/server/http/middleware"
 	"song-library-api/src/cmd/api/internal/server/http/route"
@@ -32,6 +31,7 @@ func New() (*App, error) {
 }
 
 func (a *App) Run() error {
+	defer a.provider.Logger().Info("Application started")
 	return a.runHttpServer()
 }
 
@@ -68,7 +68,8 @@ func (a *App) applyMigration(_ context.Context) error {
 		return err
 	}
 
-	log.Printf("Applied migration: %d. Dirty: %t\n", version, dirty)
+	a.provider.Logger().Info("Applied migration", "version", version, "dirty", dirty)
+
 	return nil
 }
 
