@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "group" (
 
 CREATE TABLE IF NOT EXISTS "song" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    group_id UUID NOT NULL REFERENCES "group",
+    group_id UUID NOT NULL REFERENCES "group" ON DELETE CASCADE,
     song VARCHAR(255) NOT NULL,
     text TEXT NOT NULL,
     release_date DATE NOT NULL,
