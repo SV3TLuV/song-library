@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/google/uuid"
-	"song-library-api/src/internal/model"
+	"song-library-api/src/cmd/api/internal/model"
 )
 
 type SongRepository interface {

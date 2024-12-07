@@ -3,11 +3,18 @@ package app
 import (
 	"context"
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"log"
-	"song-library-api/src/internal/config"
+	"song-library-api/src/cmd/api/internal/config"
+	middleware2 "song-library-api/src/cmd/api/internal/server/http/middleware"
+	"song-library-api/src/cmd/api/internal/server/http/route"
+	v1 "song-library-api/src/cmd/api/internal/server/http/v1"
+	"song-library-api/src/cmd/api/internal/server/http/validator"
 )
 
 type App struct {
@@ -47,7 +54,7 @@ func (a *App) initDeps(ctx context.Context) error {
 }
 
 func (a *App) applyMigration(_ context.Context) error {
-	m, err := migrate.New("file://./src/cmd/migrate/migrations/postgresql", a.provider.Config().PostgresConn)
+	m, err := migrate.New("file://./src/cmd/api/migrations/postgresql", a.provider.Config().PostgresConn)
 	if err != nil {
 		return err
 	}
@@ -76,10 +83,17 @@ func (a *App) initServiceProvider(_ context.Context) error {
 
 func (a *App) initHttpServer(_ context.Context) error {
 	a.httpServer = echo.New()
-	group := a.httpServer.Group("/api")
 
 	a.httpServer.Use(middleware.Recover())
 	a.httpServer.Use(middleware.Logger())
+	a.httpServer.Use(middleware2.ErrorHandlerMiddleware)
+
+	a.httpServer.Validator = validator.NewRequestValidator()
+
+	group := a.httpServer.Group("")
+	route.InitSongRoutes(group, v1.NewSongController(a.provider.SongService()))
+
+	a.httpServer.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	return nil
 }

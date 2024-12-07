@@ -6,3 +6,7 @@ var (
 	ErrBadRequest = errors.New("bad request")
 	ErrNotFound   = errors.New("not found")
 )
+
+type APIError struct {
+	Message string `json:"message"`
+}

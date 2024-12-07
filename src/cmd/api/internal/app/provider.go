@@ -7,8 +7,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
 	"log"
-	"song-library-api/src/internal/config"
-	"song-library-api/src/internal/db/postgres"
+	"song-library-api/src/cmd/api/internal/config"
+	"song-library-api/src/cmd/api/internal/db/postgres"
+	"song-library-api/src/cmd/api/internal/repository"
+	"song-library-api/src/cmd/api/internal/service"
 	"song-library-api/src/pkg/music_info_client"
 )
 
@@ -19,6 +21,12 @@ type serviceProvider struct {
 	trManager *manager.Manager
 
 	musicInfoClient *music_info_client.MusicInfoClient
+
+	songRepo    repository.SongRepository
+	songService service.SongService
+
+	groupRepo    repository.GroupRepository
+	groupService service.GroupService
 }
 
 func NewServiceProvider() *serviceProvider {
@@ -59,4 +67,42 @@ func (p *serviceProvider) MusicInfoClient() *music_info_client.MusicInfoClient {
 		p.musicInfoClient = music_info_client.NewMusicInfoClient(p.Config().MusicInfoServiceURL)
 	}
 	return p.musicInfoClient
+}
+
+func (p *serviceProvider) SongRepo() repository.SongRepository {
+	if p.songRepo == nil {
+		p.songRepo = repository.NewSongRepository(p.Postgres(),
+			trmpgx.DefaultCtxGetter,
+			p.TransactionManager())
+	}
+	return p.songRepo
+}
+
+func (p *serviceProvider) GroupRepo() repository.GroupRepository {
+	if p.groupRepo == nil {
+		p.groupRepo = repository.NewGroupRepository(p.Postgres(),
+			trmpgx.DefaultCtxGetter,
+			p.TransactionManager())
+	}
+	return p.groupRepo
+}
+
+func (p *serviceProvider) SongService() service.SongService {
+	if p.songService == nil {
+		p.songService = service.NewSongService(
+			p.SongRepo(),
+			p.GroupRepo(),
+			p.MusicInfoClient(),
+			p.TransactionManager())
+	}
+	return p.songService
+}
+
+func (p *serviceProvider) GroupService() service.GroupService {
+	if p.groupService == nil {
+		p.groupService = service.NewGroupService(
+			p.GroupRepo(),
+			p.TransactionManager())
+	}
+	return p.groupService
 }

@@ -3,7 +3,7 @@ package converter
 import (
 	"github.com/doug-martin/goqu/v9"
 	"github.com/google/uuid"
-	"song-library-api/src/internal/model"
+	"song-library-api/src/cmd/api/internal/model"
 )
 
 func ToRecordFromSong(song model.Song) goqu.Record {

@@ -10,8 +10,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
-	"song-library-api/src/internal/converter"
-	"song-library-api/src/internal/model"
+	"song-library-api/src/cmd/api/internal/converter"
+	"song-library-api/src/cmd/api/internal/model"
 )
 
 var _ GroupRepository = (*groupRepository)(nil)

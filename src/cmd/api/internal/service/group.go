@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"github.com/avito-tech/go-transaction-manager/trm/v2/manager"
-	"song-library-api/src/internal/model"
-	"song-library-api/src/internal/repository"
+	"song-library-api/src/cmd/api/internal/model"
+	"song-library-api/src/cmd/api/internal/repository"
 )
 
 var _ GroupService = (*groupService)(nil)
