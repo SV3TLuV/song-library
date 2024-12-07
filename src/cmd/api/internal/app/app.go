@@ -91,7 +91,9 @@ func (a *App) initHttpServer(_ context.Context) error {
 	a.httpServer.Validator = validator.NewRequestValidator()
 
 	group := a.httpServer.Group("")
-	route.InitSongRoutes(group, v1.NewSongController(a.provider.SongService()))
+	route.InitSongRoutes(group, v1.NewSongController(
+		a.provider.SongService(),
+		a.provider.GroupService()))
 
 	a.httpServer.GET("/swagger/*", echoSwagger.WrapHandler)
 

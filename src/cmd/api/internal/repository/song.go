@@ -46,7 +46,7 @@ func (repo *songRepository) GetSongs(ctx context.Context,
 			goqu.I("song.*"),
 			goqu.I("group.name").As("group"),
 		).
-		Order(goqu.I("id").Asc()).
+		Order(goqu.I("song.release_date").Asc()).
 		Limit(limit).
 		Offset(offset)
 
@@ -247,9 +247,7 @@ func (repo *songRepository) Update(ctx context.Context, entity model.Song) (*mod
 func (repo *songRepository) Delete(ctx context.Context, song model.Song) error {
 	query := goqu.Dialect("postgres").
 		Delete("song").
-		Where(goqu.Ex{
-			"id": song.ID,
-		})
+		Where(goqu.Ex{"id": song.ID})
 
 	sql, args, err := query.ToSQL()
 	if err != nil {

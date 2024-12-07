@@ -72,7 +72,7 @@ func (s *songService) GetSongText(ctx context.Context, id uuid.UUID, page, pageS
 	}
 
 	start := (page - 1) * pageSize
-	if start >= total {
+	if start > total {
 		return nil, errors.Wrap(model.ErrBadRequest, "page out of range")
 	}
 

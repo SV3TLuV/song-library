@@ -82,6 +82,10 @@ paths:
       - application/json
       description: Retrieves a paginated list of songs with optional filters
       parameters:
+      - description: Filter by group name
+        in: query
+        name: group
+        type: string
       - description: Filter by song name
         in: query
         name: song
@@ -124,6 +128,35 @@ paths:
       summary: Get list of songs
       tags:
       - Songs
+    post:
+      consumes:
+      - application/json
+      description: Adds a new song to the library
+      parameters:
+      - description: Song data
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/song.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SongView'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/model.APIError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.APIError'
+      summary: Create a new song
+      tags:
+      - Songs
   /songs/{id}:
     delete:
       consumes:
@@ -157,7 +190,6 @@ paths:
       summary: Delete a song
       tags:
       - Songs
-  /songs/{id}/edit:
     patch:
       consumes:
       - application/json
@@ -237,36 +269,6 @@ paths:
           schema:
             $ref: '#/definitions/model.APIError'
       summary: Get song text
-      tags:
-      - Songs
-  /songs/new:
-    post:
-      consumes:
-      - application/json
-      description: Adds a new song to the library
-      parameters:
-      - description: Song data
-        in: body
-        name: song
-        required: true
-        schema:
-          $ref: '#/definitions/song.CreateRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.SongView'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/model.APIError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/model.APIError'
-      summary: Create a new song
       tags:
       - Songs
 swagger: "2.0"

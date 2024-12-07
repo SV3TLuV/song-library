@@ -31,6 +31,12 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Filter by group name",
+                        "name": "group",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Filter by song name",
                         "name": "song",
                         "in": "query"
@@ -86,9 +92,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/songs/new": {
+            },
             "post": {
                 "description": "Adds a new song to the library",
                 "consumes": [
@@ -182,9 +186,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/songs/{id}/edit": {
+            },
             "patch": {
                 "description": "Updates the details of an existing song",
                 "consumes": [

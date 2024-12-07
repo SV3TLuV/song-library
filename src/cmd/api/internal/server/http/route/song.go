@@ -10,7 +10,7 @@ func InitSongRoutes(group *echo.Group, controller *v1.SongController) {
 
 	g.GET("", controller.GetList)
 	g.GET("/:id/text", controller.GetText)
-	g.POST("/new", controller.Create)
-	g.PATCH("/:id/edit", controller.Update)
-	g.DELETE("/:id/", controller.Delete)
+	g.POST("", controller.Create)
+	g.PATCH("/:id", controller.Update)
+	g.DELETE("/:id", controller.Delete)
 }

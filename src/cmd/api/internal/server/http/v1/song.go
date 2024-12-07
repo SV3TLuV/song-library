@@ -17,8 +17,13 @@ type SongController struct {
 	groupService service.GroupService
 }
 
-func NewSongController(songService service.SongService) *SongController {
-	return &SongController{songService: songService}
+func NewSongController(
+	songService service.SongService,
+	groupService service.GroupService) *SongController {
+	return &SongController{
+		songService:  songService,
+		groupService: groupService,
+	}
 }
 
 // GetList godoc
@@ -27,15 +32,16 @@ func NewSongController(songService service.SongService) *SongController {
 // @Tags         Songs
 // @Accept       json
 // @Produce      json
-// @Param        song      query     string  false  "Filter by song name"
-// @Param        text      query     string  false  "Filter by text"
-// @Param        link      query     string  false  "Filter by link"
-// @Param        releaseDate query   string  false  "Filter by release date (DD.MM.YYYY)"
-// @Param        page      query     int     false  "Page number (default: 1)"
-// @Param        pageSize  query     int     false  "Page size (default: 5)"
-// @Success      200       {object}  model.PaginatedList[model.SongView]
-// @Failure      400       {object}  model.APIError  "Bad request"
-// @Failure      500       {object}  model.APIError  "Internal server error"
+// @Param        group       query     string  false  "Filter by group name"
+// @Param        song        query     string  false  "Filter by song name"
+// @Param        text        query     string  false  "Filter by text"
+// @Param        link        query     string  false  "Filter by link"
+// @Param        releaseDate query     string  false  "Filter by release date (DD.MM.YYYY)"
+// @Param        page        query     int     false  "Page number (default: 1)"
+// @Param        pageSize    query     int     false  "Page size (default: 5)"
+// @Success      200         {object}  model.PaginatedList[model.SongView]
+// @Failure      400         {object}  model.APIError  "Bad request"
+// @Failure      500         {object}  model.APIError  "Internal server error"
 // @Router       /songs [get]
 func (c *SongController) GetList(ctx echo.Context) error {
 	var request song.GetListRequest
@@ -137,7 +143,7 @@ func (c *SongController) GetText(ctx echo.Context) error {
 // @Success      200   {object}  model.SongView
 // @Failure      400   {object}  model.APIError  "Bad request"
 // @Failure      500   {object}  model.APIError  "Internal server error"
-// @Router       /songs/new [post]
+// @Router       /songs [post]
 func (c *SongController) Create(ctx echo.Context) error {
 	var request song.CreateRequest
 	if err := ctx.Bind(&request); err != nil {
@@ -168,7 +174,7 @@ func (c *SongController) Create(ctx echo.Context) error {
 // @Failure      400   {object}  model.APIError  "Bad request"
 // @Failure      404   {object}  model.APIError  "Song not found"
 // @Failure      500   {object}  model.APIError  "Internal server error"
-// @Router       /songs/{id}/edit [patch]
+// @Router       /songs/{id} [patch]
 func (c *SongController) Update(ctx echo.Context) error {
 	var request song.UpdateRequest
 	if err := ctx.Bind(&request); err != nil {
