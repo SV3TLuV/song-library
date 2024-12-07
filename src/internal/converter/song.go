@@ -37,7 +37,7 @@ func ToRecordFromSong(song model.Song) goqu.Record {
 	return record
 }
 
-func ToViewFromSong(song model.SongWithGroup) model.SongView {
+func ToViewFromSong(song model.Song) model.SongView {
 	return model.SongView{
 		ID:          song.ID,
 		Group:       song.Group,
@@ -48,4 +48,12 @@ func ToViewFromSong(song model.SongWithGroup) model.SongView {
 		CreatedAt:   song.CreatedAt,
 		UpdatedAt:   song.UpdatedAt,
 	}
+}
+
+func ToViewsFromSong(songs []model.Song) []model.SongView {
+	views := make([]model.SongView, 0, len(songs))
+	for _, song := range songs {
+		views = append(views, ToViewFromSong(song))
+	}
+	return views
 }

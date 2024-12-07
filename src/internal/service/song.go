@@ -84,11 +84,11 @@ func (s *songService) GetSongText(ctx context.Context, id uuid.UUID, page, pageS
 	}, nil
 }
 
-func (s *songService) GetByID(ctx context.Context, id uuid.UUID) (*model.SongWithGroup, error) {
+func (s *songService) GetByID(ctx context.Context, id uuid.UUID) (*model.Song, error) {
 	return s.songRepo.GetByID(ctx, id)
 }
 
-func (s *songService) Add(ctx context.Context, song, group string) (*model.SongWithGroup, error) {
+func (s *songService) Add(ctx context.Context, song, group string) (*model.Song, error) {
 	songDetail, err := s.musicInfoClient.GetSongInfo(ctx, group, song)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get song detail")
@@ -120,6 +120,9 @@ func (s *songService) Add(ctx context.Context, song, group string) (*model.SongW
 			Link:        songDetail.Link,
 			ReleaseDate: releaseDate,
 		})
+
+		created.Group = groupDB.Name
+
 		return err
 	})
 	if err != nil {
@@ -129,26 +132,26 @@ func (s *songService) Add(ctx context.Context, song, group string) (*model.SongW
 	return created, nil
 }
 
-func (s *songService) Edit(ctx context.Context, id uuid.UUID, song, group string) (*model.SongWithGroup, error) {
-	songDB, err := s.songRepo.GetByID(ctx, id)
+func (s *songService) Edit(ctx context.Context, song model.Song) (*model.Song, error) {
+	songDB, err := s.songRepo.GetByID(ctx, song.ID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get song")
 	}
 
-	songDetail, err := s.musicInfoClient.GetSongInfo(ctx, group, song)
+	songDetail, err := s.musicInfoClient.GetSongInfo(ctx, song.Group, song.Song)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get song detail")
 	}
 
-	var updated *model.SongWithGroup
+	var updated *model.Song
 	err = s.trManager.Do(ctx, func(ctx context.Context) error {
-		groupDB, err := s.groupRepo.GetByName(ctx, group)
+		groupDB, err := s.groupRepo.GetByName(ctx, song.Group)
 		if err != nil && !errors.Is(err, model.ErrNotFound) {
 			return errors.Wrap(err, "failed to get group by name")
 		}
 
 		if groupDB == nil {
-			groupDB, err = s.groupRepo.Create(ctx, model.Group{Name: group})
+			groupDB, err = s.groupRepo.Create(ctx, model.Group{Name: song.Group})
 			if err != nil {
 				return err
 			}
@@ -159,22 +162,31 @@ func (s *songService) Edit(ctx context.Context, id uuid.UUID, song, group string
 			return errors.Wrap(err, "failed to parse release date")
 		}
 
-		songDB.GroupID = groupDB.ID
-		songDB.Song = song
-		songDB.Text = songDetail.Text
-		songDB.Link = songDetail.Link
-		songDB.ReleaseDate = releaseDate
+		if song.GroupID == uuid.Nil {
+			song.GroupID = groupDB.ID
+		}
+		if song.Group == "" {
+			song.Group = songDB.Group
+		}
+		if song.Song == "" {
+			song.Song = songDB.Song
+		}
+		if song.Text == "" {
+			song.Text = songDetail.Text
+		}
+		if song.Link == "" {
+			song.Link = songDetail.Link
+		}
+		if song.ReleaseDate.IsZero() {
+			song.ReleaseDate = releaseDate
+		}
 
-		updated, err = s.songRepo.Update(ctx, model.Song{
-			ID:          songDB.ID,
-			GroupID:     groupDB.ID,
-			Song:        song,
-			Text:        songDetail.Text,
-			Link:        songDetail.Link,
-			ReleaseDate: releaseDate,
-			CreatedAt:   songDB.CreatedAt,
-			UpdatedAt:   songDB.UpdatedAt,
-		})
+		song.CreatedAt = songDB.CreatedAt
+		song.UpdatedAt = time.Now()
+
+		updated, err = s.songRepo.Update(ctx, song)
+		updated.Group = groupDB.Name
+
 		return err
 	})
 	if err != nil {
@@ -184,6 +196,11 @@ func (s *songService) Edit(ctx context.Context, id uuid.UUID, song, group string
 	return updated, nil
 }
 
-func (s *songService) Delete(ctx context.Context, song model.Song) error {
-	return s.songRepo.Delete(ctx, song)
+func (s *songService) Delete(ctx context.Context, id uuid.UUID) (*model.Song, error) {
+	song, err := s.GetByID(ctx, id)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get song")
+	}
+
+	return song, s.songRepo.Delete(ctx, *song)
 }

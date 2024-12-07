@@ -35,7 +35,7 @@ func NewSongRepository(
 
 func (repo *songRepository) GetSongs(ctx context.Context,
 	filters *model.SongFilter,
-	limit, offset uint) ([]model.SongWithGroup, error) {
+	limit, offset uint) ([]model.Song, error) {
 	query := goqu.Dialect("postgres").
 		From("song").
 		Join(
@@ -73,7 +73,7 @@ func (repo *songRepository) GetSongs(ctx context.Context,
 		return nil, errors.Wrap(err, "failed to build query")
 	}
 
-	songs := make([]model.SongWithGroup, 0)
+	songs := make([]model.Song, 0)
 	tr := repo.getter.DefaultTrOrDB(ctx, repo.pool)
 	err = pgxscan.Select(ctx, tr, &songs, sql, args...)
 	if err != nil {
@@ -83,7 +83,7 @@ func (repo *songRepository) GetSongs(ctx context.Context,
 	return songs, nil
 }
 
-func (repo *songRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.SongWithGroup, error) {
+func (repo *songRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.Song, error) {
 	query := goqu.Dialect("postgres").
 		From("song").
 		Join(
@@ -101,7 +101,7 @@ func (repo *songRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.S
 		return nil, errors.Wrap(err, "failed to build query")
 	}
 
-	var song model.SongWithGroup
+	var song model.Song
 	tr := repo.getter.DefaultTrOrDB(ctx, repo.pool)
 	if err = pgxscan.Get(ctx, tr, &song, sql, args...); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -113,7 +113,7 @@ func (repo *songRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.S
 	return &song, nil
 }
 
-func (repo *songRepository) GetByNameAndGroup(ctx context.Context, group, name string) (*model.SongWithGroup, error) {
+func (repo *songRepository) GetByNameAndGroup(ctx context.Context, group, name string) (*model.Song, error) {
 	query := goqu.Dialect("postgres").
 		From("song").
 		Join(
@@ -131,7 +131,7 @@ func (repo *songRepository) GetByNameAndGroup(ctx context.Context, group, name s
 		return nil, errors.Wrap(err, "failed to build query")
 	}
 
-	var song model.SongWithGroup
+	var song model.Song
 	tr := repo.getter.DefaultTrOrDB(ctx, repo.pool)
 	if err = pgxscan.Get(ctx, tr, &song, sql, args...); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

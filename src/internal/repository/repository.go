@@ -7,9 +7,9 @@ import (
 )
 
 type SongRepository interface {
-	GetSongs(ctx context.Context, filters *model.SongFilter, limit, offset uint) ([]model.SongWithGroup, error)
-	GetByID(ctx context.Context, id uuid.UUID) (*model.SongWithGroup, error)
-	GetByNameAndGroup(ctx context.Context, group, name string) (*model.SongWithGroup, error)
+	GetSongs(ctx context.Context, filters *model.SongFilter, limit, offset uint) ([]model.Song, error)
+	GetByID(ctx context.Context, id uuid.UUID) (*model.Song, error)
+	GetByNameAndGroup(ctx context.Context, group, name string) (*model.Song, error)
 	Count(ctx context.Context, filters *model.SongFilter) (uint, error)
 	Create(ctx context.Context, entity model.Song) (*model.Song, error)
 	Update(ctx context.Context, entity model.Song) (*model.Song, error)
