@@ -32,8 +32,8 @@ func NewSongController(songService service.SongService) *SongController {
 // @Param        page      query     int     false  "Page number (default: 1)"
 // @Param        pageSize  query     int     false  "Page size (default: 10)"
 // @Success      200       {object}  model.PaginatedList[model.SongView]
-// @Failure      400       {object}  string  "Bad request"
-// @Failure      500       {object}  string  "Internal server error"
+// @Failure      400       {object}  model.APIError  "Bad request"
+// @Failure      500       {object}  model.APIError  "Internal server error"
 // @Router       /songs [get]
 func (c *SongController) GetList(ctx echo.Context) error {
 	var request song.GetListRequest
@@ -87,9 +87,9 @@ func (c *SongController) GetList(ctx echo.Context) error {
 // @Param        page      query     int     false  "Page number (default: 1)"
 // @Param        pageSize  query     int     false  "Page size (default: 10)"
 // @Success      200       {object}  []string
-// @Failure      400       {object}  string  "Bad request"
-// @Failure      404       {object}  string  "Song not found"
-// @Failure      500       {object}  string  "Internal server error"
+// @Failure      400       {object}  model.APIError  "Bad request"
+// @Failure      404       {object}  model.APIError  "Song not found"
+// @Failure      500       {object}  model.APIError  "Internal server error"
 // @Router       /songs/{id}/text [get]
 func (c *SongController) GetText(ctx echo.Context) error {
 	var request song.GetTextRequest
@@ -126,8 +126,8 @@ func (c *SongController) GetText(ctx echo.Context) error {
 // @Produce      json
 // @Param        song  body      song.CreateRequest  true  "Song data"
 // @Success      200   {object}  model.SongView
-// @Failure      400   {object}  string  "Bad request"
-// @Failure      500   {object}  string  "Internal server error"
+// @Failure      400   {object}  model.APIError  "Bad request"
+// @Failure      500   {object}  model.APIError  "Internal server error"
 // @Router       /songs/new [post]
 func (c *SongController) Create(ctx echo.Context) error {
 	var request song.CreateRequest
@@ -156,9 +156,9 @@ func (c *SongController) Create(ctx echo.Context) error {
 // @Param        id    path      string          true   "Song ID"
 // @Param        song  body      song.UpdateRequest true "Updated song data"
 // @Success      200   {object}  model.SongView
-// @Failure      400   {object}  string  "Bad request"
-// @Failure      404   {object}  string  "Song not found"
-// @Failure      500   {object}  string  "Internal server error"
+// @Failure      400   {object}  model.APIError  "Bad request"
+// @Failure      404   {object}  model.APIError  "Song not found"
+// @Failure      500   {object}  model.APIError  "Internal server error"
 // @Router       /songs/{id}/edit [patch]
 func (c *SongController) Update(ctx echo.Context) error {
 	var request song.UpdateRequest
@@ -211,9 +211,9 @@ func (c *SongController) Update(ctx echo.Context) error {
 // @Produce      json
 // @Param        id    path      string  true   "Song ID"
 // @Success      200   {object}  model.SongView
-// @Failure      400   {object}  string  "Bad request"
-// @Failure      404   {object}  string  "Song not found"
-// @Failure      500   {object}  string  "Internal server error"
+// @Failure      400   {object}  model.APIError  "Bad request"
+// @Failure      404   {object}  model.APIError  "Song not found"
+// @Failure      500   {object}  model.APIError  "Internal server error"
 // @Router       /songs/{id} [delete]
 func (c *SongController) Delete(ctx echo.Context) error {
 	var request song.DeleteRequest
