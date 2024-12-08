@@ -21,19 +21,3 @@ services:
     logging:
       driver: none
     restart: always
-
-  api:
-    container_name: music_library_api
-    image: music_library_api
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - database
-    networks:
-      - host
-    logging:
-      driver: none
-    restart: always
