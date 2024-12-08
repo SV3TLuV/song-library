@@ -27,7 +27,7 @@ services:
     image: music_library_api
     build:
       context: .
-      dockerfile: Measurements.Api/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     user: root
